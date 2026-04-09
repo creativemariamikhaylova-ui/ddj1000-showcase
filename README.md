@@ -4,7 +4,7 @@
 
 Лендинг DJ-контроллера Pioneer DDJ-1000.
 
-Ссылка на сайт: 
+Ссылка на сайт: https://ddj1000-showcase.vercel.app/
 
 ## Файлы
 
