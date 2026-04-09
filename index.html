@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Pioneer DDJ-1000 | Ночная сессия</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Montserrat', 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .club-lights {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.03), transparent);
+            transform: skewX(-20deg);
+            animation: beamMove 8s infinite;
+        }
+
+        .light-1 { left: -30%; animation-delay: 0s; background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent); }
+        .light-2 { left: 10%; animation-delay: 2s; background: linear-gradient(90deg, transparent, rgba(255, 0, 212, 0.04), transparent); }
+        .light-3 { left: 50%; animation-delay: 4s; background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent); }
+        .light-4 { left: 80%; animation-delay: 6s; background: linear-gradient(90deg, transparent, rgba(255, 0, 212, 0.03), transparent); }
+
+        @keyframes beamMove {
+            0% { transform: translateX(-100%) skewX(-20deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(200%) skewX(-20deg); opacity: 0; }
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            z-index: 1000;
+            padding: 5px 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .site-header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-neon {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .logo-dot {
+            width: 6px;
+            height: 6px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ffff;
+            animation: pulseNeon 1.5s infinite;
+        }
+
+        @keyframes pulseNeon {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px #00ffff; }
+            50% { opacity: 0.5; box-shadow: 0 0 15px #00ffff; }
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-menu li a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #aaa;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00ffff;
+            box-shadow: 0 0 8px #00ffff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu li a:hover::before,
+        .nav-menu li a.active::before {
+            width: 100%;
+        }
+
+        .nav-menu li a:hover,
+        .nav-menu li a.active {
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background: transparent;
+            color: #00ffff;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .page {
+            display: none;
+            padding: 120px 0 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page.active-page {
+            display: block;
+            animation: fadeUp 0.6s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 16px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            background: rgba(0, 255, 255, 0.03);
+        }
+
+        .badge-pulse {
+            width: 6px;
+            height: 6px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ffff;
+            animation: pulseNeon 1s infinite;
+        }
+
+        .neon-title {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            line-height: 1.1;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .hero-line {
+            width: 60px;
+            height: 2px;
+            background: #00ffff;
+            margin: 20px auto;
+            box-shadow: 0 0 8px #00ffff;
+        }
+
+        .lead {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 40px;
+        }
+
+        .scroll-hint {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, #00ffff, transparent);
+            animation: scrollAnim 2s infinite;
+        }
+
+        @keyframes scrollAnim {
+            0% { height: 10px; opacity: 0; }
+            50% { height: 40px; opacity: 1; }
+            100% { height: 10px; opacity: 0; }
+        }
+
+        .hero-image {
+            margin: 40px 0 60px;
+        }
+
+        .image-frame {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: grayscale(20%) contrast(1.1);
+        }
+
+        .frame-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 50px rgba(0, 255, 255, 0.2);
+            pointer-events: none;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-block {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            margin: 50px 0 30px;
+            text-align: center;
+            color: #888;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature:hover {
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: rgba(0, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .feature p {
+            font-size: 0.8rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        }
+
+        .title-divider {
+            width: 50px;
+            height: 2px;
+            background: #00ffff;
+            margin: 20px auto 50px;
+            box-shadow: 0 0 8px #00ffff;
+        }
+
+        .specs-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .spec-group {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .spec-header {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: #00ffff;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .spec-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .spec-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        .spec-line span:first-child {
+            color: #666;
+        }
+
+        .spec-line span:last-child {
+            color: #fff;
+        }
+
+        .tech-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 50px 0;
+        }
+
+        .tech-card {
+            position: relative;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .tech-card:hover {
+            border-color: #00ffff;
+            transform: scale(1.05);
+        }
+
+        .tech-card span {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .tech-glow {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .tech-card:hover .tech-glow {
+            left: 100%;
+        }
+
+        .quote-block {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 2px solid #00ffff;
+            margin: 40px 0;
+        }
+
+        .quote-mark-neon {
+            font-size: 3rem;
+            color: rgba(0, 255, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .quote-mark-neon::before {
+            content: '"';
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .quote-author {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #00ffff;
+        }
+
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .exp-card {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .exp-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 255, 0.4);
+        }
+
+        .exp-header {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .exp-card p {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .pros-cons-neon {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .pc-card {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .pc-title {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .pc-card ul {
+            list-style: none;
+        }
+
+        .pc-card li {
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: #aaa;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .pc-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        /* ===== РЕСУРСЫ ===== */
+        .resources-grid-neon {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 50px 0;
+        }
+
+        .resource-neon {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+            position: relative;
+        }
+
+        .resource-neon:hover {
+            transform: translateY(-5px);
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.03);
+        }
+
+        .resource-neon-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 255, 255, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .resource-neon-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: #00ffff;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        }
+
+        .resource-neon-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .resource-neon-desc {
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .resource-arrow {
+            margin-top: 20px;
+            color: #00ffff;
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .resource-neon:hover .resource-arrow {
+            transform: translateX(5px);
+        }
+
+        .tip-neon {
+            position: relative;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 212, 0.02));
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            margin: 40px 0;
+            overflow: hidden;
+        }
+
+        .tip-neon-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
+            animation: rotateSlow 20s linear infinite;
+        }
+
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tip-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .tip-label {
+            font-size: 0.6rem;
+            letter-spacing: 4px;
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .tip-content p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .image-showcase {
+            margin: 50px 0;
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: grayscale(30%) contrast(1.05);
+        }
+
+        .image-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            pointer-events: none;
+        }
+
+        .footer {
+            background: rgba(5, 5, 5, 0.95);
+            border-top: 1px solid rgba(0, 255, 255, 0.1);
+            padding: 40px 0;
+            margin-top: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-neon {
+            text-align: center;
+        }
+
+        .footer-line {
+            width: 40px;
+            height: 1px;
+            background: #00ffff;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        .footer-neon p {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #555;
+        }
+
+        .footer-neon-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .footer-neon-dots span {
+            width: 4px;
+            height: 4px;
+            background: #00ffff;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+                padding: 20px 0;
+                text-align: center;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .neon-title {
+                font-size: 2.5rem;
+            }
+            
+            .stats-row {
+                flex-direction: column;
+            }
+            
+            .pros-cons-neon {
+                grid-template-columns: 1fr;
+            }
+            
+            .specs-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .quote-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="club-lights">
+    <div class="light-beam light-1"></div>
+    <div class="light-beam light-2"></div>
+    <div class="light-beam light-3"></div>
+    <div class="light-beam light-4"></div>
+</div>
+<div class="noise-overlay"></div>
+
+<header class="site-header">
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <span class="logo-neon">DDJ-1000</span>
+                <span class="logo-dot"></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" data-page="home" class="active">Главная</a></li>
+                <li><a href="#" data-page="specs">Характеристики</a></li>
+                <li><a href="#" data-page="experience">Впечатления</a></li>
+                <li><a href="#" data-page="resources">Ресурсы</a></li>
+            </ul>
+            <div class="menu-toggle">МЕНЮ</div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <section id="home-page" class="page active-page">
+            <div class="hero-section">
+                <div class="hero-badge">
+                    <span class="badge-pulse"></span>
+                    FLAGSHIP 2025
+                </div>
+                <h1 class="neon-title">PIONEER<br>DDJ-1000</h1>
+                <div class="hero-line"></div>
+                <p class="lead">4-канальный контроллер. Механические джоги. Звук клубного уровня.</p>
+                
+            </div>
+            
+            <div class="hero-image">
+                <div class="image-frame">
+                    <img src="images/2.png" alt="Pioneer DDJ-1000" onerror="this.src='https://picsum.photos/id/20/800/450'">
+                    <div class="frame-glow"></div>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-block">
+                    <div class="stat-value" data-count="4">0</div>
+                    <div class="stat-label">КАНАЛА</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value" data-count="206">0</div>
+                    <div class="stat-label">ММ ДЖОГИ</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value" data-count="24">0</div>
+                    <div class="stat-label">БИТ / 44.1КГЦ</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-value" data-count="8">0</div>
+                    <div class="stat-label">BEAT FX</div>
+                </div>
+            </div>
+            
+            <h2 class="section-title">ПОЧЕМУ ЭТО МОЙ ВЫБОР</h2>
+            <div class="features-grid">
+                <div class="feature neon-card">
+                    <div class="feature-number">01</div>
+                    <h3>Механические джоги</h3>
+                    <p>Полноразмерные 206 мм диски с резистивным покрытием, как на CDJ-2000NXS2</p>
+                </div>
+                <div class="feature neon-card">
+                    <div class="feature-number">02</div>
+                    <h3>4-канальный микс</h3>
+                    <p>Микшируйте до 4 треков с профессиональным 3-полосным эквалайзером</p>
+                </div>
+                <div class="feature neon-card">
+                    <div class="feature-number">03</div>
+                    <h3>Студийное качество</h3>
+                    <p>24-битная звуковая карта для чистого сигнала в любой системе</p>
+                </div>
+                <div class="feature neon-card">
+                    <div class="feature-number">04</div>
+                    <h3>Клубные эффекты</h3>
+                    <p>8 Beat FX от легендарного микшера DJM-900NXS2</p>
+                </div>
+                <div class="feature neon-card">
+                    <div class="feature-number">05</div>
+                    <h3>RGB контроль</h3>
+                    <p>16 мультицветных пэдов для полного контроля треков</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="specs-page" class="page">
+            <h1 class="section-title neon-text">ТЕХНИЧЕСКИЕ ДАННЫЕ</h1>
+            <div class="title-divider"></div>
+            
+            <div class="specs-showcase">
+                <div class="spec-group">
+                    <div class="spec-header">КОНТРОЛЛЕР</div>
+                    <div class="spec-items">
+                        <div class="spec-line">
+                            <span>Каналы</span>
+                            <span>4 (A, B, C, D)</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Джоги</span>
+                            <span>206 мм, механические</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Вес</span>
+                            <span>6.1 кг</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Габариты</span>
+                            <span>728 × 397.5 × 71.5 мм</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Корпус</span>
+                            <span>Металлический</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="spec-group">
+                    <div class="spec-header">ЗВУК</div>
+                    <div class="spec-items">
+                        <div class="spec-line">
+                            <span>Звуковая карта</span>
+                            <span>24 бит / 44.1 кГц</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Динамический диапазон</span>
+                            <span>110 дБ</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Частотный диапазон</span>
+                            <span>20 - 20000 Гц</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Соотношение С/Ш</span>
+                            <span>110 дБ</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="spec-group">
+                    <div class="spec-header">ЭФФЕКТЫ И ВХОДЫ</div>
+                    <div class="spec-items">
+                        <div class="spec-line">
+                            <span>Beat FX</span>
+                            <span>8 эффектов</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Sound FX</span>
+                            <span>14 эффектов</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Входы</span>
+                            <span>XLR, RCA, 2 x MIC</span>
+                        </div>
+                        <div class="spec-line">
+                            <span>Выходы</span>
+                            <span>Master XLR, Booth</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tech-grid">
+                <div class="tech-card" data-tech="DVS">
+                    <div class="tech-glow"></div>
+                    <span>DVS поддержка</span>
+                </div>
+                <div class="tech-card" data-tech="rekordbox">
+                    <div class="tech-glow"></div>
+                    <span>rekordbox</span>
+                </div>
+                <div class="tech-card" data-tech="Serato">
+                    <div class="tech-glow"></div>
+                    <span>Serato DJ Pro</span>
+                </div>
+                <div class="tech-card" data-tech="Virtual DJ">
+                    <div class="tech-glow"></div>
+                    <span>Virtual DJ</span>
+                </div>
+            </div>
+            
+            <div class="image-showcase">
+                <div class="image-wrapper">
+                    <img src="images/1.png" alt="Джоги DDJ-1000" onerror="this.src='https://picsum.photos/id/133/800/420'">
+                    <div class="image-border"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience-page" class="page">
+            <h1 class="section-title neon-text">ЛИЧНЫЙ ОПЫТ</h1>
+            <div class="title-divider"></div>
+            
+            <div class="quote-block">
+                <p class="quote-text">"DDJ-1000 — это не просто контроллер. Это инструмент, который стирает грань между домашней студией и клубной сценой."</p>
+                <div class="quote-author">— МИХАЙЛОВА МАРИЯ, ДИДЖЕЙ</div>
+            </div>
+            
+            <div class="experience-grid">
+                <div class="exp-card">
+                    <div class="exp-header">ДОМА</div>
+                    <p>Идеальная платформа для практики и подготовки сетов. Компактный, но с полным функционалом клубного сетапа. Джоги с механическим приводом делают сведение треков максимально комфортным.</p>
+                </div>
+                <div class="exp-card">
+                    <div class="exp-header">В КЛУБЕ</div>
+                    <p>Балансные XLR выходы и надёжная металлическая конструкция делают его желанным гостем на любой площадке. Звук чистый и мощный, никаких нареканий от звукорежиссёров.</p>
+                </div>
+                <div class="exp-card">
+                    <div class="exp-header">СТРИМИНГ</div>
+                    <p>Встроенная звуковая карта обеспечивает идеальный сигнал для онлайн-трансляций. Отсутствие задержек и чистейший звук — то что нужно для стримов.</p>
+                </div>
+            </div>
+            
+            <div class="pros-cons-neon">
+                <div class="pc-card pros">
+                    <div class="pc-title">+ СИЛЬНЫЕ СТОРОНЫ</div>
+                    <ul>
+                        <li>Клубное качество сборки и компонентов</li>
+                        <li>Точнейшие механические джоги</li>
+                        <li>Профессиональные XLR выходы</li>
+                        <li>RGB пэды с отличной чувствительностью</li>
+                        <li>Полная интеграция с rekordbox</li>
+                    </ul>
+                </div>
+                <div class="pc-card cons">
+                    <div class="pc-title">− НЮАНСЫ</div>
+                    <ul>
+                        <li>Вес 6.1 кг — нужен прочный кейс</li>
+                        <li>Требователен к производительности ПК</li>
+                        <li>Отсутствие встроенного Wi-Fi</li>
+                        <li>Высокий ценовой сегмент</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="image-showcase">
+                <div class="image-wrapper">
+                    <img src="images/3.png" alt="Диджей за пультом" onerror="this.src='https://picsum.photos/id/176/800/440'">
+                    <div class="image-border"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="resources-page" class="page">
+            <h1 class="section-title neon-text">ОБУЧЕНИЕ И РЕСУРСЫ</h1>
+            <div class="title-divider"></div>
+            
+            <div class="resources-grid-neon">
+                <a href="https://youtu.be/Eso_B8fjb7Q?si=vuovW9CRaSPojJiV" class="resource-neon" target="_blank" rel="noopener noreferrer">
+                    <div class="resource-neon-icon"></div>
+                    <div class="resource-neon-title">YOUTUBE ТУТОРИАЛЫ</div>
+                    <div class="resource-neon-desc">Обзор и сравнение DDJ-1000 с новой моделью FLX10</div>
+                    <div class="resource-arrow">→</div>
+                </a>
+                <a href="https://docs.yandex.ru/docs/view?tm=1775222932&tld=ru&lang=en&name=DDJ1000-Pioneer-User-Manual.pdf&text=%D0%BC%D0%B0%D0%BD%D1%83%D0%B0%D0%BB%20%D0%B4%D0%BB%D1%8F%20DDj%201000&url=https%3A%2F%2Fwww.winnings.com.au%2Fpublic%2Fmanuals%2FDDJ1000-Pioneer-User-Manual.pdf&lr=2&mime=pdf&l10n=ru&sign=742e5edbf8b40ba16d4e4801f841562b&keyno=0&nosw=1&serpParams=tm%3D1775222932%26tld%3Dru%26lang%3Den%26name%3DDDJ1000-Pioneer-User-Manual.pdf%26text%3D%25D0%25BC%25D0%25B0%25D0%25BD%25D1%2583%25D0%25B0%25D0%25BB%2B%25D0%25B4%25D0%25BB%25D1%258F%2BDDj%2B1000%26url%3Dhttps%253A%2F%2Fwww.winnings.com.au%2Fpublic%2Fmanuals%2FDDJ1000-Pioneer-User-Manual.pdf%26lr%3D2%26mime%3Dpdf%26l10n%3Dru%26sign%3D742e5edbf8b40ba16d4e4801f841562b%26keyno%3D0%26nosw%3D1" class="resource-neon" target="_blank" rel="noopener noreferrer">
+                    <div class="resource-neon-icon"></div>
+                    <div class="resource-neon-title">ОФИЦИАЛЬНЫЙ МАНУАЛ</div>
+                    <div class="resource-neon-desc">Полное руководство пользователя от Pioneer DJ</div>
+                    <div class="resource-arrow">→</div>
+                </a>
+                <a href="https://youtu.be/ZDCflBr_hMc?si=P59V2-mPNBjZm-eu" class="resource-neon" target="_blank" rel="noopener noreferrer">
+                    <div class="resource-neon-icon"></div>
+                    <div class="resource-neon-title">REKORDBOX КУРСЫ</div>
+                    <div class="resource-neon-desc">Мастер-классы по подготовке треков и live-выступлениям</div>
+                    <div class="resource-arrow">→</div>
+                </a>
+                <div class="resource-neon">
+                    <div class="resource-neon-icon"></div>
+                    <div class="resource-neon-title">COMMUNITY</div>
+                    <div class="resource-neon-desc">Форум пользователей, пресеты и советы</div>
+                    <div class="resource-arrow">→</div>
+                </div>
+            </div>
+            
+            <div class="tip-neon">
+                <div class="tip-neon-glow"></div>
+                <div class="tip-content">
+                    <div class="tip-label">PRO СОВЕТ</div>
+                    <p>Начните с освоения Beat FX и Keyboard Mode — это даст вам 80% возможностей контроллера уже в первую неделю использования.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-neon">
+            <div class="footer-line"></div>
+            <p>© 2026 МИХАЙЛОВА МАРИЯ — PIONEER DDJ-1000</p>
+            <div class="footer-neon-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        const navItems = document.querySelectorAll('.nav-menu li a');
+        const pages = {
+            home: document.getElementById('home-page'),
+            specs: document.getElementById('specs-page'),
+            experience: document.getElementById('experience-page'),
+            resources: document.getElementById('resources-page')
+        };
+
+        function showPage(pageId) {
+            Object.values(pages).forEach(page => {
+                if(page) page.classList.remove('active-page');
+            });
+            
+            if(pages[pageId]) {
+                pages[pageId].classList.add('active-page');
+            }
+            
+            navItems.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            history.pushState(null, null, '#' + pageId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        navItems.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                if(pageId && pages[pageId]) {
+                    showPage(pageId);
+                }
+            });
+        });
+
+        function hashChange() {
+            let hash = window.location.hash.substring(1);
+            if(hash && pages[hash]) {
+                showPage(hash);
+            } else {
+                showPage('home');
+            }
+        }
+        
+        window.addEventListener('popstate', hashChange);
+        hashChange();
+
+        const statValues = document.querySelectorAll('.stat-value');
+        
+        function animateStats() {
+            statValues.forEach(el => {
+                const target = parseInt(el.getAttribute('data-count'));
+                if(!target) return;
+                
+                let current = 0;
+                const increment = target / 50;
+                const update = () => {
+                    current += increment;
+                    if(current < target) {
+                        el.textContent = Math.floor(current);
+                        requestAnimationFrame(update);
+                    } else {
+                        el.textContent = target;
+                    }
+                };
+                update();
+            });
+        }
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    animateStats();
+                    observer.disconnect();
+                }
+            });
+        });
+        
+        const homePage = document.getElementById('home-page');
+        if(homePage) observer.observe(homePage);
+
+        const techCards = document.querySelectorAll('.tech-card');
+        techCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if(menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+        
+        const lightBeams = document.querySelectorAll('.light-beam');
+        setInterval(() => {
+            lightBeams.forEach(beam => {
+                const randomDelay = Math.random() * 8;
+                beam.style.animationDelay = `${randomDelay}s`;
+            });
+        }, 10000);
+    })();
+</script>
+</body>
+</html>
